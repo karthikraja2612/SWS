@@ -55,6 +55,8 @@ def get_pdf_files(directory: Path) -> List[Path]:
     if not pdf_files:
         raise FileNotFoundError(f"No PDF files found in: {directory}")
 
+    logger.info("Loaded %d PDF files from %s", len(pdf_files), directory)
+
     return pdf_files
 
 
@@ -112,6 +114,8 @@ def load_all_chunks() -> list[ChunkRecord]:
 
     if not records:
         raise RuntimeError("No extractable text was found in the PDF documents.")
+
+    logger.info("Created %d chunks from all PDFs", len(records))
 
     return records
 
@@ -172,6 +176,9 @@ def ingest() -> dict[str, int]:
         )
         total_inserted += len(batch)
         logger.info("Inserted %d/%d chunks", total_inserted, len(chunks))
+
+    persisted_count = collection.count()
+    logger.info("Chroma collection count: %d", persisted_count)
 
     logger.info("Ingestion complete. Persisted collection at %s", CHROMA_DIR)
     return {"chunks_indexed": total_inserted}
