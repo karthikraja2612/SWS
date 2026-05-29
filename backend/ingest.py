@@ -9,10 +9,7 @@ import chromadb
 import fitz  # PyMuPDF
 from sentence_transformers import SentenceTransformer
 
-try:
-    from langchain_text_splitters import RecursiveCharacterTextSplitter
-except ImportError:  # pragma: no cover - fallback for older LangChain installs
-    from langchain.text_splitters import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
