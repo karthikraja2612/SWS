@@ -24,6 +24,7 @@ const initialMessage = {
 function App() {
   const [messages, setMessages] = useState([initialMessage]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const api = useMemo(() => {
     const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
@@ -43,6 +44,7 @@ function App() {
       sources: [],
     };
 
+    setError("");
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
@@ -61,15 +63,11 @@ function App() {
         },
       ]);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          text: "I don't have that information in the company documents.",
-          sources: [],
-        },
-      ]);
+      const message =
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Unable to reach the company policy service right now. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -109,6 +107,7 @@ function App() {
           suggestedQuestions={suggestedQuestions}
           onQuestionChipClick={sendQuestion}
           loading={loading}
+          error={error}
         />
       </main>
 

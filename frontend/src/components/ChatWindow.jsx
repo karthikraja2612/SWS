@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 import QuestionChips from "./QuestionChips";
 
-function ChatWindow({ messages, suggestedQuestions, onQuestionChipClick, loading }) {
+function ChatWindow({ messages, suggestedQuestions, onQuestionChipClick, loading, error }) {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -12,6 +12,8 @@ function ChatWindow({ messages, suggestedQuestions, onQuestionChipClick, loading
   return (
     <section className="chat-window" aria-label="Chat conversation">
       <div className="messages-stack">
+        {error ? <div className="error-banner">{error}</div> : null}
+
         {messages.map((message) => (
           <MessageBubble key={message.id} message={message} />
         ))}
