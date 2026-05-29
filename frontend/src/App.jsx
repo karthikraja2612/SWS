@@ -76,26 +76,15 @@ function App() {
   return (
     <div className="app-shell">
       <header className="top-header">
-        <div className="header-left">
-          <button className="back-btn" type="button" aria-label="Back">
-            <span className="back-arrow">&lt;</span>
-            <span>Back</span>
-          </button>
+        <div className="brand-lockup">
+          <span className="logo-badge">SWS</span>
           <div className="title-group">
-            <span className="logo-badge">AI</span>
             <h1>SWS AI Document Hub</h1>
-            <span className="live-badge">LIVE DEMO</span>
+            <p>Private policy intelligence for employees</p>
           </div>
         </div>
-        <button className="notify-btn" type="button" aria-label="Notifications">
-          N
-        </button>
+        <span className="live-badge">LIVE DEMO</span>
       </header>
-
-      <nav className="tabs-row">
-        <button className="tab-item" type="button">Document Upload</button>
-        <button className="tab-item active" type="button">AI Assistant</button>
-      </nav>
 
       <main className="chat-layout">
         <div className="info-banner">
