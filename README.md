@@ -1,6 +1,6 @@
-# SWS AI Document Hub
+# RAG AI Document Hub
 
-A Retrieval-Augmented Generation (RAG) chatbot that answers employee questions using only internal company policy PDF documents.
+A Retrieval-Augmented Generation (RAG) chatbot that answers questions using only the document corpus you place in the `docs/` folder.
 
 ## Overview
 
@@ -125,7 +125,7 @@ python retrieval_test.py
 This prints the top 4 retrieved chunks for:
 
 ```text
-How many sick leaves do employees get?
+What topics are covered in the documents?
 ```
 
 ### Environment Variables
@@ -170,7 +170,7 @@ pip install -r requirements.txt
 
 ### 2. Prepare Documents
 
-Place your 10 company policy PDFs in the `docs/` folder.
+Place your PDF documents in the `docs/` folder.
 
 ### 3. Ingest Documents
 
@@ -211,10 +211,10 @@ git add .
 ## Important Behavior
 
 - The assistant answers only from retrieved document context
-- If the answer is not found in the company documents, the fallback response is:
+- If the answer is not found in the document context, the fallback response is:
 
 ```text
-I don't have that information in the company documents.
+I don't have that information in the document context.
 ```
 
 - Source documents are returned with each answer

@@ -4,20 +4,20 @@ import ChatWindow from "./components/ChatWindow";
 import ChatInput from "./components/ChatInput";
 
 const suggestedQuestions = [
-  "What is the annual leave policy?",
-  "How many sick leave days do I get?",
-  "What is the notice period for resignation?",
-  "What are the WFH guidelines?",
-  "What health insurance benefits do we have?",
-  "How does the performance review work?",
-  "What tools does SWS AI use for communication?",
-  "What is the IT password policy?",
+  "What topics are covered in these documents?",
+  "Can you summarize the most important points?",
+  "Where is the relevant policy or reference mentioned?",
+  "What does the document say about deadlines or requirements?",
+  "Which documents mention this topic?",
+  "Can you give me a concise answer with sources?",
+  "What are the key exceptions or edge cases?",
+  "What should I read next for more detail?",
 ];
 
 const initialMessage = {
   id: "welcome",
   role: "assistant",
-  text: "Hi! I'm the SWS AI company assistant. Ask me anything about our HR policies, leave, benefits, resignation process, WFH guidelines, or any other company policy.",
+  text: "Hi! I'm a document assistant. Ask me anything about the PDFs loaded into this RAG pipeline, and I'll answer using retrieved context only.",
   sources: [],
 };
 
@@ -50,7 +50,7 @@ function App() {
 
     try {
       const response = await api.post("/api/chat", { question });
-      const answer = response.data?.answer?.trim() || "I don't have that information in the company documents.";
+      const answer = response.data?.answer?.trim() || "I don't have that information in the document context.";
       const sources = Array.isArray(response.data?.sources) ? response.data.sources : [];
 
       setMessages((prev) => [
@@ -66,7 +66,7 @@ function App() {
       const message =
         error?.response?.data?.detail ||
         error?.message ||
-        "Unable to reach the company policy service right now. Please try again.";
+        "Unable to reach the document service right now. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -77,10 +77,10 @@ function App() {
     <div className="app-shell">
       <header className="top-header">
         <div className="brand-lockup">
-          <span className="logo-badge">SWS</span>
+          <span className="logo-badge">RAG</span>
           <div className="title-group">
-            <h1>SWS AI Document Hub</h1>
-            <p>Private policy intelligence for employees</p>
+            <h1>RAG AI Document Hub</h1>
+            <p>Private retrieval-augmented answers from your document set</p>
           </div>
         </div>
         <span className="live-badge">LIVE DEMO</span>
@@ -88,7 +88,7 @@ function App() {
 
       <main className="chat-layout">
         <div className="info-banner">
-          Powered by Ollama AI + 10 SWS AI company documents. Ask anything about company policies.
+          Powered by Groq AI + ChromaDB retrieval over your local document corpus.
         </div>
 
         <ChatWindow

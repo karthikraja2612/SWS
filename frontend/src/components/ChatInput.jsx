@@ -20,15 +20,15 @@ function ChatInput({ onSend, disabled, loading }) {
           type="text"
           value={value}
           onChange={(event) => setValue(event.target.value)}
-          placeholder="Compose a policy question..."
+          placeholder="Ask a question about the documents..."
           disabled={disabled}
-          aria-label="Ask a policy question"
+          aria-label="Ask a document question"
         />
         <button type="submit" disabled={disabled || !value.trim()} aria-label="Send">
           {loading ? <span className="spinner tiny" /> : "Send"}
         </button>
       </form>
-      <p className="input-helper">Answers sourced from SWS AI company documents only. Press Enter to send.</p>
+      <p className="input-helper">Answers are sourced only from retrieved documents. Press Enter to send.</p>
     </footer>
   );
 }

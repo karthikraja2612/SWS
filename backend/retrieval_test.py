@@ -11,7 +11,7 @@ CHROMA_DIR = Path(__file__).resolve().parent / "chroma_db"
 COLLECTION_NAME = "company_policies"
 EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
 TOP_K = 4
-QUERY = "How many sick leaves do employees get?"
+QUERY = "What topics are covered in the documents?"
 
 
 def load_embedding_model() -> SentenceTransformer:

@@ -12,7 +12,7 @@ from groq import Groq
 BASE_DIR = Path(__file__).resolve().parent.parent
 ENV_PATH = BASE_DIR / ".env"
 MODEL_NAME = "llama-3.3-70b-versatile"
-FALLBACK_ANSWER = "I don't have that information in the company documents."
+FALLBACK_ANSWER = "I don't have that information in the document context."
 
 load_dotenv(ENV_PATH)
 
@@ -49,7 +49,7 @@ def build_context(retrieved_chunks: list[dict[str, Any]]) -> str:
 def build_prompt(question: str, retrieved_chunks: list[dict[str, Any]]) -> str:
     context = build_context(retrieved_chunks)
     return (
-        "You are an internal company policy assistant.\n\n"
+        "You are a document question-answering assistant.\n\n"
         "Answer ONLY using the provided context.\n"
         "If the answer cannot be found in the context, reply exactly:\n\n"
         f"{FALLBACK_ANSWER}\n\n"
@@ -69,7 +69,7 @@ def generate_answer(question: str, retrieved_chunks: list[dict[str, Any]]) -> st
             {
                 "role": "system",
                 "content": (
-                    "You are an internal company policy assistant. Answer only from the provided context. "
+                    "You are a document question-answering assistant. Answer only from the provided context. "
                     f"If the answer is not in the context, reply exactly: {FALLBACK_ANSWER}"
                 ),
             },
@@ -95,12 +95,12 @@ def generate_answer(question: str, retrieved_chunks: list[dict[str, Any]]) -> st
 if __name__ == "__main__":
     sample_chunks = [
         {
-            "chunk_text": "Employees are entitled to 12 sick leave days per calendar year.",
+            "chunk_text": "The documents describe document ingestion, retrieval, and answer generation.",
             "metadata": {
-                "source_file": "sick_leave_policy.pdf",
+                "source_file": "sample_document.pdf",
                 "page_number": 2,
                 "chunk_index": 0,
             },
         }
     ]
-    print(generate_answer("How many sick leave days do employees get?", sample_chunks))
+    print(generate_answer("What does the document set describe?", sample_chunks))

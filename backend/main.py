@@ -35,7 +35,7 @@ class ChatResponse(BaseModel):
 
 
 app = FastAPI(
-    title="Company Policy RAG Chatbot",
+    title="Document RAG Chatbot",
     version="1.0.0",
 )
 

@@ -23,7 +23,7 @@ function ChatWindow({ messages, suggestedQuestions, onQuestionChipClick, loading
             <div className="assistant-avatar">AI</div>
             <div className="message-bubble assistant">
               <div className="spinner" aria-label="Loading" />
-              <span>Looking through company documents...</span>
+              <span>Searching the document corpus...</span>
             </div>
           </div>
         ) : null}
