@@ -4,14 +4,14 @@ import ChatWindow from "./components/ChatWindow";
 import ChatInput from "./components/ChatInput";
 
 const suggestedQuestions = [
-  "What topics are covered in these documents?",
-  "Can you summarize the most important points?",
-  "Where is the relevant policy or reference mentioned?",
-  "What does the document say about deadlines or requirements?",
-  "Which documents mention this topic?",
-  "Can you give me a concise answer with sources?",
-  "What are the key exceptions or edge cases?",
-  "What should I read next for more detail?",
+  "What is the leave policy?",
+  "What does the work from home policy allow?",
+  "What are the rules in the HR policy?",
+  "What does the IT security policy say about passwords and access?",
+  "What behavior is covered in the code of conduct?",
+  "How does the performance review policy work?",
+  "What is the resignation policy?",
+  "What benefits are included in the benefits and compensation policy?",
 ];
 
 const initialMessage = {

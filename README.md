@@ -1,134 +1,112 @@
 # RAG AI Document Hub
 
-A Retrieval-Augmented Generation (RAG) chatbot that answers questions using only the document corpus you place in the `docs/` folder.
+A Retrieval-Augmented Generation (RAG) application that answers questions from a local PDF document corpus using a FastAPI backend, ChromaDB vector search, and a React + Vite frontend.
 
 ## Overview
 
-This project ingests policy PDFs, chunks and embeds the content, stores vectors in ChromaDB, retrieves the most relevant passages for a user query, and generates a grounded answer with a large language model.
+This project turns a set of PDF documents into a searchable knowledge base. The backend extracts text from PDFs, splits it into chunks, creates embeddings, stores those chunks in ChromaDB, retrieves the most relevant passages for each user question, and sends the retrieved context to Groq for answer generation.
 
-The application is split into two parts:
-
-- `backend/` - FastAPI service, document ingestion, retrieval, and answer generation
-- `frontend/` - React + Vite chat interface
+The frontend provides a clean chat interface where users can ask policy-related questions and receive grounded answers with source documents.
 
 ## Features
 
 - PDF ingestion from the `docs/` folder
 - Text extraction with PyMuPDF
 - Chunking with `RecursiveCharacterTextSplitter`
-- Local ChromaDB persistence
 - Embeddings with `sentence-transformers/all-MiniLM-L6-v2`
-- Retrieval of the top 4 relevant chunks
-- Grounded answer generation with Groq
-- FastAPI endpoint at `POST /api/chat`
-- Responsive React frontend
+- Local vector storage with ChromaDB
+- Retrieval of the top matching chunks for each query
+- Answer generation with Groq
+- FastAPI backend with a single chat endpoint
+- React + Vite frontend chat UI
 - Suggested question chips
-- Loading spinner and source display
-- Graceful API error handling
-
-## Workflow Diagram
-
-```mermaid
-flowchart TD
-    A[PDF documents in docs/] --> B[Ingest PDFs with PyMuPDF]
-    B --> C[Split text into chunks]
-    C --> D[Generate embeddings with all-MiniLM-L6-v2]
-    D --> E[Store chunks in local ChromaDB]
-    F[User question in React UI] --> G[POST /api/chat]
-    G --> H[Retrieve top 4 chunks from ChromaDB]
-    H --> I[Build grounded prompt]
-    I --> J[Generate answer with Groq]
-    J --> K[Return answer + sources]
-    K --> L[Render response in frontend]
-```
+- Loading states, error handling, and source display
 
 ## Project Structure
 
 ```text
-project/
+Ragnostic/
+├── README.md
+├── requirements.txt
 ├── docs/
+│   ├── RAGnostic-Benefits-Compensation.pdf
+│   ├── RAGnostic-Code-of-Conduct.pdf
+│   ├── RAGnostic-Company-Overview.pdf
+│   ├── RAGnostic-HR-Policy.pdf
+│   ├── RAGnostic-IT-Security-Policy.pdf
+│   ├── RAGnostic-Leave-Policy.pdf
+│   ├── RAGnostic-Performance-Review.pdf
+│   ├── RAGnostic-Resignation-Policy.pdf
+│   └── RAGnostic-Work-From-Home-Policy.pdf
 ├── backend/
-│   ├── ingest.py
+│   ├── main.py
 │   ├── rag.py
+│   ├── ingest.py
 │   ├── groq_service.py
 │   ├── retrieval_test.py
-│   ├── main.py
-│   └── chroma_db/
-├── frontend/
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   └── src/
-│       ├── App.jsx
-│       ├── App.css
-│       ├── main.jsx
-│       └── components/
-│           ├── ChatWindow.jsx
-│           ├── ChatInput.jsx
-│           ├── MessageBubble.jsx
-│           └── QuestionChips.jsx
-├── requirements.txt
-└── README.md
+│   ├── requirements.txt
+│   ├── chroma_db/
+│   └── venv/
+└── frontend/
+    ├── index.html
+    ├── package.json
+    ├── vite.config.js
+    └── src/
+        ├── App.jsx
+        ├── App.css
+        ├── main.jsx
+        └── components/
+            ├── ChatWindow.jsx
+            ├── ChatInput.jsx
+            ├── MessageBubble.jsx
+            └── QuestionChips.jsx
 ```
 
-## Backend
+## Tech Stack
 
-### Main API
+### Backend
 
-- `POST /api/chat`
+- FastAPI
+- Uvicorn
+- ChromaDB
+- PyMuPDF
+- sentence-transformers
+- langchain-text-splitters
+- Groq Python SDK
+- python-dotenv
+- Pydantic
 
-Request:
+### Frontend
 
-```json
-{
-  "question": "string"
-}
+- React
+- Vite
+- Axios
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A[PDF files in docs/] --> B[backend/ingest.py]
+    B --> C[Extract text with PyMuPDF]
+    C --> D[Split text into chunks]
+    D --> E[Create embeddings]
+    E --> F[Store chunks in ChromaDB]
+    G[User question in frontend] --> H[POST /api/chat]
+    H --> I[backend/rag.py retrieves top chunks]
+    I --> J[backend/groq_service.py builds prompt]
+    J --> K[Groq generates answer]
+    K --> L[Frontend renders answer and sources]
 ```
 
-Response:
+## Prerequisites
 
-```json
-{
-  "answer": "string",
-  "sources": ["file1.pdf", "file2.pdf"]
-}
-```
+- Python 3.10 or newer
+- Node.js 18 or newer
+- npm
+- A Groq API key
+- PDF documents placed in the `docs/` folder
 
-### Ingestion Pipeline
-
-Run the ingestion script to process the PDFs and build the local vector database:
-
-```bash
-cd backend
-python ingest.py
-```
-
-What it does:
-
-- Reads all PDF files from `docs/`
-- Extracts text using PyMuPDF
-- Splits text into chunks with:
-  - `chunk_size = 500`
-  - `chunk_overlap = 50`
-- Creates embeddings using `all-MiniLM-L6-v2`
-- Stores chunk text and metadata in local ChromaDB
-
-### Retrieval Test
-
-A lightweight smoke test is available:
-
-```bash
-cd backend
-python retrieval_test.py
-```
-
-This prints the top 4 retrieved chunks for:
-
-```text
-What topics are covered in the documents?
-```
-
-### Environment Variables
+## Environment Variables
 
 Create a `.env` file in the repository root:
 
@@ -136,109 +114,261 @@ Create a `.env` file in the repository root:
 GROQ_API_KEY=your_groq_api_key_here
 ```
 
-## Frontend
-
-The frontend is a React application built with Vite.
-
-Run it with:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-By default, the frontend expects the backend at:
-
-```text
-http://localhost:8000
-```
-
-You can override this with:
+Optional frontend override:
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-## Setup
+## Backend Setup
 
-### 1. Install Python Dependencies
+### 1. Create or activate the Python virtual environment
 
-```bash
+If the repository already contains `backend/venv`, activate it:
+
+```powershell
+cd D:\Codes\Ragnostic\backend
+.\venv\Scripts\Activate.ps1
+```
+
+If you are starting from a fresh clone and the virtual environment does not exist yet, create one:
+
+```powershell
+cd D:\Codes\Ragnostic\backend
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+```
+
+### 2. Install Python dependencies
+
+Install from the repository root requirements file:
+
+```powershell
+cd D:\Codes\Ragnostic
 pip install -r requirements.txt
 ```
 
-### 2. Prepare Documents
+If you prefer, you can also install from `backend/requirements.txt` because it contains the same backend dependencies.
 
-Place your PDF documents in the `docs/` folder.
+### 3. Add your documents
 
-### 3. Ingest Documents
+Place the PDF files you want the assistant to use in the `docs/` folder.
 
-```bash
-cd backend
-python ingest.py
+The current repository includes these sample documents:
+
+- `RAGnostic-Benefits-Compensation.pdf`
+- `RAGnostic-Code-of-Conduct.pdf`
+- `RAGnostic-Company-Overview.pdf`
+- `RAGnostic-HR-Policy.pdf`
+- `RAGnostic-IT-Security-Policy.pdf`
+- `RAGnostic-Leave-Policy.pdf`
+- `RAGnostic-Performance-Review.pdf`
+- `RAGnostic-Resignation-Policy.pdf`
+- `RAGnostic-Work-From-Home-Policy.pdf`
+
+### 4. Build the ChromaDB index
+
+Run ingestion once after the PDFs are in place:
+
+```powershell
+cd D:\Codes\Ragnostic
+python backend\ingest.py
 ```
 
-### 4. Start the Backend
+This will:
 
-```bash
-cd backend
-uvicorn main:app --reload
+- Read all PDFs from `docs/`
+- Extract text page by page
+- Chunk the text into overlapping pieces
+- Generate embeddings with `all-MiniLM-L6-v2`
+- Store chunks and metadata in `backend/chroma_db/`
+
+### 5. Start the backend API
+
+Use the venv Python executable directly to avoid launcher path issues on Windows:
+
+```powershell
+cd D:\Codes\Ragnostic\backend
+.\venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-### 5. Start the Frontend
+The API will run at:
 
-```bash
-cd frontend
+```text
+http://127.0.0.1:8000
+```
+
+## Frontend Setup
+
+### 1. Install frontend dependencies
+
+```powershell
+cd D:\Codes\Ragnostic\frontend
 npm install
+```
+
+### 2. Start the frontend
+
+```powershell
 npm run dev
 ```
 
-## Notes on Git Tracking
+The Vite app will usually open at:
 
-This README is not ignored by `.gitignore`, so it will be included automatically the next time you run:
-
-```bash
-git add README.md
+```text
+http://localhost:5173
 ```
 
-Or, to stage everything changed:
+## Full Run Order
 
-```bash
-git add .
+Use two terminals:
+
+### Terminal 1: Backend
+
+```powershell
+cd D:\Codes\Ragnostic\backend
+.\venv\Scripts\Activate.ps1
+.\venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
+
+### Terminal 2: Frontend
+
+```powershell
+cd D:\Codes\Ragnostic\frontend
+npm run dev
+```
+
+If you update the PDF files later, rerun:
+
+```powershell
+python backend\ingest.py
+```
+
+before restarting the backend.
+
+## API Reference
+
+### Health Check
+
+```http
+GET /
+```
+
+Response:
+
+```json
+{
+  "status": "ok"
+}
+```
+
+### Chat Endpoint
+
+```http
+POST /api/chat
+```
+
+Request body:
+
+```json
+{
+  "question": "What is the leave policy?"
+}
+```
+
+Response body:
+
+```json
+{
+  "answer": "...",
+  "sources": ["RAGnostic-Leave-Policy.pdf"]
+}
+```
+
+## Ingestion Script
+
+Run the ingestion script when:
+
+- You add new PDFs
+- You replace existing PDFs
+- You want to rebuild the vector index from scratch
+
+Command:
+
+```powershell
+python backend\ingest.py
+```
+
+The script uses these key settings:
+
+- `chunk_size = 500`
+- `chunk_overlap = 50`
+- `top_k = 4` for retrieval
+- `all-MiniLM-L6-v2` for embeddings
+
+## Retrieval Smoke Test
+
+A small retrieval test is available:
+
+```powershell
+cd D:\Codes\Ragnostic\backend
+python retrieval_test.py
+```
+
+This prints the top retrieved chunks for a sample policy question so you can verify that the vector store is working.
 
 ## Important Behavior
 
 - The assistant answers only from retrieved document context
-- If the answer is not found in the document context, the fallback response is:
-
-```text
-I don't have that information in the document context.
-```
-
-- Source documents are returned with each answer
-- The frontend shows loading state while waiting for the API
+- If the answer is not in the retrieved context, it falls back to a generic refusal
+- Source document names are returned with each answer
+- The frontend shows loading and error states
+- The backend loads `.env` from the repository root
 
 ## Troubleshooting
 
-### No documents are found
+### `uvicorn main:app --reload` fails with a launcher path error
 
-Make sure the PDF files exist in `docs/` and have the `.pdf` extension.
+Use the venv Python module form instead:
 
-### ChromaDB errors
-
-Delete the local Chroma database folder and re-run ingestion:
-
-```bash
-rm -rf backend/chroma_db
-python backend/ingest.py
+```powershell
+.\venv\Scripts\python.exe -m uvicorn main:app --reload
 ```
 
-### API key errors
+### ChromaDB is missing or stale
 
-Verify `GROQ_API_KEY` is defined in `.env` and that the file is in the project root.
+Delete the generated database folder and rerun ingestion:
+
+```powershell
+Remove-Item -Recurse -Force backend\chroma_db
+python backend\ingest.py
+```
+
+### No documents are found
+
+Make sure the PDF files exist in `docs/` and that they have the `.pdf` extension.
+
+### Groq API key errors
+
+Verify that `GROQ_API_KEY` is set in the `.env` file at the repository root.
+
+### Frontend cannot reach the backend
+
+Confirm that the backend is running on `http://127.0.0.1:8000` and that the frontend is pointing to the same URL.
+
+## GitHub Notes
+
+For GitHub, you typically want to keep only the source files and document corpus in the repository.
+
+Do not commit generated local artifacts such as:
+
+- `frontend/node_modules/`
+- `backend/venv/`
+- `backend/__pycache__/`
+- Temporary build outputs
+
+The ChromaDB folder under `backend/chroma_db/` is generated from ingestion. If you want the repository to be lightweight, you can remove it before publishing and document that users should run `python backend/ingest.py` after cloning.
 
 ## License
 
-Internal assessment project. Add a license here if needed.
+Internal project. Add a license if you want the repository to be public.

@@ -1,7 +1,7 @@
 function QuestionChips({ questions, onQuestionClick, disabled }) {
   return (
     <section className="chips-wrap" aria-label="Suggested questions">
-      <p className="chips-title">Try asking:</p>
+      <p className="chips-title">Try asking about the policies:</p>
       <div className="chips-grid">
         {questions.map((question) => (
           <button
